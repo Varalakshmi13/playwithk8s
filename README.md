@@ -11,7 +11,11 @@ secrets
 service accounts
 
 
+liveness and Readiness probes
+
 deployment strategies:
 Rolling update
 Canary deplaoyment
 Bluegreen deployment
+
+
