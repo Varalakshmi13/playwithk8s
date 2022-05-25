@@ -8,6 +8,7 @@ services
 deployments
 configmps
 secrets
+service accounts
 
 
 deployment strategies:
