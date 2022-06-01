@@ -18,11 +18,16 @@ Rolling update
 Canary deplaoyment
 Bluegreen deployment
 
-save ist of pods to file:
+save list of pods to file:
 kubectl get po > podslist.txt
 
+list pods in all namespaces:
+kubectl get po --all-namepaces
 
+drain node:
+kubectl drain node-name
 
-
+better command is :
+kubectl drain node-name --ignore-daemonsets
 
 
