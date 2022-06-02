@@ -31,7 +31,9 @@ better command is :
 kubectl drain node-name --ignore-daemonsets
 
 bring back the node using uncardon : 
-
 kubectl uncordon node-name
+
+
+
 
 
