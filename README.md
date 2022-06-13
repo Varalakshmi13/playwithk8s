@@ -10,7 +10,6 @@ configmps
 secrets
 service accounts
 
-
 liveness and Readiness probes
 
 deployment strategies:
