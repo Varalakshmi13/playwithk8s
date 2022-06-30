@@ -1,1 +1,4 @@
 commads:
+
+kubectl get po
+
