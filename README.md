@@ -17,6 +17,8 @@ Rolling update
 Canary deplaoyment
 Bluegreen deployment
 
+
+
 save list of pods to file:
 kubectl get po > podslist.txt
 
