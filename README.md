@@ -18,7 +18,6 @@ Canary deplaoyment
 Bluegreen deployment
 
 
-
 save list of pods to file:
 kubectl get po > podslist.txt
 
@@ -33,8 +32,4 @@ kubectl drain node-name --ignore-daemonsets
 
 bring back the node using uncardon : 
 kubectl uncordon node-name
-
-
-
-
 
