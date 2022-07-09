@@ -112,3 +112,15 @@ spec:
               - key: node-role.kubernetes.io/master
                 operator: Exists
 ```
+###### Affinity with key and value
+```
+affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: disktype
+            operator: In
+            values:
+            - ssd
+```
