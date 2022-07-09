@@ -1,3 +1,4 @@
+#### Manual Scheduling
 ###### Schedule pod after manuall assigning the node.
 `
 kubectl delete po podname.   
