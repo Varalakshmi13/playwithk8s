@@ -1,4 +1,4 @@
-# playwithk8s
+# Core Concepts
 
 #### Pods
 ###### Create pod 
@@ -140,7 +140,14 @@ k run custom-nginx --image=nginx --port=8080
 k create ns dev-ns
 `
 
-###### 
+###### Create deployment
+`
+k create deploy redis-deploy -n dev-ns --image=redis --replicas=2
+`
+######  Create a pod and create a service and add target port
+`
+k run httpd --image httpd:alpine --port=80 --expose
+`
 
 
 
