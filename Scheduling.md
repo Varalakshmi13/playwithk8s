@@ -124,3 +124,10 @@ affinity:
             values:
             - ssd
 ```
+###### if the pod failed with Reason:       OOMKilled , that means pod ran out of memory
+
+###### create pod yaml
+`
+k get po elephant -o yaml> elephant.yaml
+` modify and run `kubectl replace -f elephant.yaml --force` 
+
