@@ -131,4 +131,52 @@ affinity:
 k get po elephant -o yaml> elephant.yaml
 ` modify and run `kubectl replace -f elephant.yaml --force` 
 
+#### Daemon Sets
+###### Get Daemon sets in all ns
+`
+k get ds --all-namespaces
+`
+###### Create a daemon set
+```
+kubectl create deployment elasticsearch --image=k8s.gcr.io/fluentd-elasticsearch:1.20 -n kube-system --dry-run=client -o yaml > fluentd.yaml
+Modify the kind and remove replicas
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  labels:
+    app: elasticsearch
+  name: elasticsearch
+  namespace: kube-system
+spec:
+  selector:
+    matchLabels:
+      app: elasticsearch
+  template:
+    metadata:
+      labels:
+        app: elasticsearch
+    spec:
+      containers:
+      - image: k8s.gcr.io/fluentd-elasticsearch:1.20
+        name: fluentd-elasticsearch
+```
 
+#### Statis pods
+###### Find static pods in all namespaces
+```
+kubectl get pods --all-namespaces 
+
+and look for those with -controlplane appended in the name
+```
+
+###### kube-proxy is deployed as a DaemonSet and hence, it is not a staic pod.
+
+###### By default, static pods are created for the controlplane components and hence, they are only created in the controlplane node.
+
+##### Path of static pod
+
+###### Run the command `ps -aux | grep kubelet ` and identify the `config file - --config=/var/lib/kubelet/config.yaml.` Then check in the config file for staticPodPath.
+
+##### Create static pod
+###### Go to `/etc/kubernetes/manifests` and get the static pod yaml from doc and add `command ` or we can use kubectl command `kubectl run --restart=Never --image=busybox static-busybox --dry-run=client -o yaml --command -- sleep 1000 > /etc/kubernetes/manifests/static-busybox.yaml`
