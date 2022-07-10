@@ -131,3 +131,4 @@ affinity:
 k get po elephant -o yaml> elephant.yaml
 ` modify and run `kubectl replace -f elephant.yaml --force` 
 
+
