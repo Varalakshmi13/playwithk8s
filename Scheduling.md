@@ -180,3 +180,28 @@ and look for those with -controlplane appended in the name
 
 ##### Create static pod
 ###### Go to `/etc/kubernetes/manifests` and get the static pod yaml from doc and add `command ` or we can use kubectl command `kubectl run --restart=Never --image=busybox static-busybox --dry-run=client -o yaml --command -- sleep 1000 > /etc/kubernetes/manifests/static-busybox.yaml`
+
+##### Remove static pod scheduled on different node
+###### First check the pod is scheduled on which node
+`
+k get po -o wide
+`
+###### Get ip of that node and do ssh
+`
+k get no -o wide
+`
+
+###### Run the command `ps -aux | grep kubelet | grep config ` and identify the `config file - --config=/var/lib/kubelet/config.yaml.` Then check in the config file for staticPodPath.
+
+###### go to static pod path and delete the manifest file
+`
+rm -rf pod.yaml
+`
+
+### Multiple schedulers
+###### create a configmap that the scheduler will employ using the concept of ConfigMap as a volume.Create a configmap with name my-scheduler-config using the content of file /root/my-scheduler-config.yaml
+`
+kubectl create -n kube-system configmap my-scheduler-config --from-file=/root/my-scheduler-config.yaml
+`
+
+###### Add scheduler to the pod schedulerName: my-scheduler
