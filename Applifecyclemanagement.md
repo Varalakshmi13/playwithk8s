@@ -117,3 +117,67 @@ spec:
     - secretRef:
         name: db-secret
 ```
+
+
+###### Add sidecar container and mount the volume to side car container Volume Mount: log-volume Mount Path: /var/log/event-simulator/
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  name: app
+  namespace: elastic-stack
+  labels:
+    name: app
+spec:
+  containers:
+  - name: app
+    image: kodekloud/event-simulator
+    volumeMounts:
+    - mountPath: /log
+      name: log-volume
+
+  - name: sidecar
+    image: kodekloud/filebeat-configured
+    volumeMounts:
+    - mountPath: /var/log/event-simulator/
+      name: log-volume
+
+  volumes:
+  - name: log-volume
+    hostPath:
+      # directory location on host
+      path: /var/log/webapp
+      # this field is optional
+      type: DirectoryOrCreate
+```
+
+#### Init containers
+###### Find which pod has init containers `k describe pod ` and find for Init Containers or `k describe po podname | grep Init`
+
+###### Reason for status of pod can be obtained from Reason field in Init Container `k describe po podname `
+
+###### How much time it will take for application to come up, add the command seconds of init containers
+
+###### Update a pod to have init container
+```
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: red
+  namespace: default
+spec:
+  containers:
+  - command:
+    - sh
+    - -c
+    - echo The app is running! && sleep 3600
+    image: busybox:1.28
+    name: red-container
+  initContainers:
+  - image: busybox
+    name: red-initcontainer
+    command: 
+      - "sleep"
+      - "20"
+```
