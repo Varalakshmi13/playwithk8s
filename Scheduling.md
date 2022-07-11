@@ -200,8 +200,8 @@ rm -rf pod.yaml
 
 ### Multiple schedulers
 ###### create a configmap that the scheduler will employ using the concept of ConfigMap as a volume.Create a configmap with name my-scheduler-config using the content of file /root/my-scheduler-config.yaml
-`
+```
 kubectl create -n kube-system configmap my-scheduler-config --from-file=/root/my-scheduler-config.yaml
-`
+```
 
 ###### Add scheduler to the pod schedulerName: my-scheduler
