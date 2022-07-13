@@ -181,3 +181,8 @@ spec:
       - "sleep"
       - "20"
 ```
+###### Command to get the existing po yaml
+```
+kubectl get pod orange -o yaml > /root/orange.yaml
+```
+
