@@ -69,3 +69,111 @@ kubectl get csr agent-smith -o yaml > agent.yaml
 
 ###### Delete CSR
 `kubectl delete csr agent-smith`
+
+
+### Kubeconfig
+
+###### Where is the default kubeconfig file located in the current environment?
+```
+ls -a
+/root/.kube
+```
+
+###### How many clusters are defined in the default kubeconfig file?
+```
+kubectl config view
+```
+
+###### A new kubeconfig file named my-kube-config is created. It is placed in the /root directory. How many clusters are defined in that kubeconfig file?
+```
+kubectl config view --kubeconfig my-kube-config
+```
+
+###### to know the current context
+```
+kubectl config --kubeconfig=/root/my-kube-config current-context
+```
+
+###### to use the context
+```
+kubectl config --kubeconfig=/root/my-kube-config use-context research
+```
+
+###### We don't want to have to specify the kubeconfig file option on each command. Make the my-kube-config file the default kubeconfig.
+`Replace the contents in the default kubeconfig file with the content from my-kube-config file.
+`
+
+###### With the current-context set to research, we are trying to access the cluster. However something seems to be wrong. Identify and fix the issue.Try running the kubectl get pods command and look for the error. All users certificates are stored at /etc/kubernetes/pki/users.
+
+`
+The path to certificate is incorrect in the kubeconfig file. Correct the certificate name which is available at /etc/kubernetes/pki/users/.
+`
+
+
+### RBAC
+
+###### Inspect the environment and identify the authorization modes configured on the cluster.
+`
+Use the command kubectl describe pod kube-apiserver-controlplane -n kube-system and look for --authorization-mode.
+`
+
+###### How many roles exist in the default namespace?
+`kubectl get roles`
+
+###### Roles in all namespaces
+`kubectl get roles --all-namespaces --no-headers | wc -l`
+
+###### What are the resources the kube-proxy role in the kube-system namespace is given access to?
+`kubectl describe role kube-proxy -n kube-system`
+
+###### Which account is the kube-proxy role assigned to?
+`
+kubectl describe rolebinding kube-proxy -n kube-system
+`
+
+######  Inspect the permissions granted to the user. Check if the user can list pods in the default namespace.
+`
+kubectl get pods --as dev-user`
+
+###### Create the necessary roles and role bindings required for the dev-user to create, list and delete pods in the default namespace.
+
+```
+kubectl create role developer --namespace=default --verb=list,create,delete --resource=pods
+ kubectl create rolebinding dev-user-binding --namespace=default --role=developer --user=dev-user
+```
+
+###### manifest
+```
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  namespace: default
+  name: developer
+rules:
+- apiGroups: [""]
+  resources: ["pods"]
+  verbs: ["list", "create","delete"]
+
+---
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: dev-user-binding
+subjects:
+- kind: User
+  name: dev-user
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: developer
+  apiGroup: rbac.authorization.k8s.io
+```
+
+
+###### Edit the role
+```
+kubectl edit role developer -n blue
+```
+
+
+
