@@ -193,6 +193,26 @@ kubectl get po -o yaml
 ###### We just added additional permissions for the newly created dashboard-sa account using RBAC.
 `checkout the files used to configure RBAC at /var/rbac`
 
-######   
+######   to get the access token check the token from service account and using that find the actual token from secrets
+
+###### The Dashboard application is programmed to read token from the secret mount location. However currently, the default service account is mounted. Update the deployment to use the newly created ServiceAccount
+`
+Edit the deployment and in pod  spec use the new sa name
+template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        name: web-dashboard
+    spec:
+      `serviceAccountName: dashboard-sa`
+      containers:
+      - image: gcr.io/kodekloud/customimage/my-kubernetes-dashboard
+        imagePullPolicy: Always
+        name: web-dashboard
+        ports:
+        - containerPort: 8080
+          protocol: TCP                          
+
+`
 
 
