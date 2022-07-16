@@ -196,7 +196,7 @@ kubectl get po -o yaml
 ######   to get the access token check the token from service account and using that find the actual token from secrets
 
 ###### The Dashboard application is programmed to read token from the secret mount location. However currently, the default service account is mounted. Update the deployment to use the newly created ServiceAccount
-`
+```
 Edit the deployment and in pod  spec use the new sa name
 template:
     metadata:
@@ -213,6 +213,160 @@ template:
         - containerPort: 8080
           protocol: TCP                          
 
-`
+```
+
+### Image Security
+
+###### What secret type must we choose for docker registry?
+```
+kubectl create secret --help
+```
+
+###### Create a secret object with the credentials required to access the registry.
+
+Name: private-reg-cred
+Username: dock_user
+Password: dock_password
+Server: myprivateregistry.com:5000
+Email: dock_user@myprivateregistry.com
+```
+kubectl create secret docker-registry private-reg-cred --docker-username=dock_user --docker-password=dock_password --docker-server=myprivateregistry.com:5000 --docker-email=dock_user@myprivateregistry.com
+```
+
+###### Configure the deployment to use credentials from the new secret to pull images from the private registry
+```
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: web
+    spec:
+      containers:
+      - image: myprivateregistry.com:5000/nginx:alpine
+        imagePullPolicy: IfNotPresent
+        name: nginx
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+      imagePullSecrets:
+          - name: private-reg-cred
+```
+
+### Security contexts
+###### What is the user used to execute the sleep process within the ubuntu-sleeper pod?
+```
+kubectl exec ubuntu-sleeper -- whoami
+```
+
+###### Run command as 1010 user instead of root user
+```
+spec:
+  securityContext:
+    runAsUser: 1010
+  containers:
+  - command:
+    - sleep
+    - "4800"
+```
+
+###### To delete the pod fast 
+`kubectl delete pod ubuntu-sleeper --force`
+
+###### The User ID defined in the securityContext of the container overrides the User ID in the POD.
+
+###### Update pod ubuntu-sleeper to run as Root user and with the SYS_TIME capability.
+```
+spec:
+  containers:
+  - command:
+    - sleep
+    - "4800"
+    image: ubuntu
+    name: ubuntu-sleeper
+    securityContext:
+      capabilities:
+        add: ["SYS_TIME"]
+        
+ securitycontext is under the container        
+```
+###### for multiple security contexts
+```
+    securityContext:
+      capabilities:
+        add: ["SYS_TIME", "NET_ADMIN"]
+```
+
+
+### Network policies
+
+###### How many networkpolicies are present
+```
+kubectl get networkpolicy or kubectl get netpol
+```
+
+###### Which pod is the Network Policy applied on?
+```
+kubectl get netpol
+and look Pod Selector column
+
+or 
+
+kubectl get po --show-labels | grep name=payroll
+```
+
+###### What type of traffic is this Network Policy configured to handle?
+```
+kubectl describe networkpolicy
+```
+
+###### Create a network policy to allow traffic from the Internal application only to the payroll-service and db-service.
+```
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: internal-policy
+  namespace: default
+spec:
+  podSelector:
+    matchLabels:
+      name: internal
+  policyTypes:
+  - Egress
+  - Ingress
+  ingress:
+    - {}
+  egress:
+  - to:
+    - podSelector:
+        matchLabels:
+          name: mysql
+    ports:
+    - protocol: TCP
+      port: 3306
+
+  - to:
+    - podSelector:
+        matchLabels:
+          name: payroll
+    ports:
+    - protocol: TCP
+      port: 8080
+
+  - ports:
+    - port: 53
+      protocol: UDP
+    - port: 53
+      protocol: TCP
+      
+ We have also allowed Egress traffic to TCP and UDP port. This has been added to ensure that the internal DNS resolution works from the internal pod. Remember: The kube-dns service is exposed on port 53:
+ 
+ kubectl get svc -n kube-system 
+```
+
 
 
