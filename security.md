@@ -176,4 +176,23 @@ kubectl edit role developer -n blue
 ```
 
 
+###### What type of account does the Dashboard application use to query the Kubernetes API?
+`check the url and find the error`
+
+###### Inspect the Dashboard Application POD and identify the Service Account mounted on it.
+`
+kubectl get po -o yaml
+`
+
+###### At what location is the ServiceAccount credentials available within the pod?
+`kubectl describe pod and check volume mount`
+
+###### The default ServiceAccount has limited access. Create a new ServiceAccount named dashboard-sa.
+`kubectl create serviceaccount dashboard-sa`
+
+###### We just added additional permissions for the newly created dashboard-sa account using RBAC.
+`checkout the files used to configure RBAC at /var/rbac`
+
+######   
+
 
