@@ -1,0 +1,51 @@
+###### What is the network interface configured for cluster connectivity on the controlplane node?
+```
+Run the ip a / ip link command and identify the interface.
+
+root@controlplane:~# ip a | grep 10.0.0.0.0
+16476: eth0@if16477: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1450 qdisc noqueue state UP group default 
+    link/ether 02:42:0a:03:74:0c brd ff:ff:ff:ff:ff:ff link-netnsid 0
+    inet 10.3.116.12/24 brd 10.3.116.255 scope global eth0
+root@controlplane:~# 
+```
+
+
+###### What is the MAC address of the interface on the controlplane node?
+```
+ip link show eth0
+```
+
+###### What is the MAC address assigned to node01?
+```
+arp node01
+```
+
+###### We use Docker as our container runtime. What is the interface/bridge created by Docker on this host?
+```
+ip link
+
+docker0
+```
+
+###### If you were to ping google from the controlplane node, which route does it take?
+```
+ip route show default
+```
+
+###### What is the port the kube-scheduler is listening on in the controlplane node?
+```
+netstat -lntp
+```
+
+###### Notice that ETCD is listening on two ports. Which of these have more client connections established?
+```
+netstat -anp | grep etcd
+
+netstat -anp | grep etcd | grep 2380 | wc -l
+
+netstat -anp | grep etcd | grep 2379 | wc -l
+```
+
+
+###### because 2379 is the port of ETCD to which all control plane components connect to. 2380 is only for etcd peer-to-peer connectivity. When you have multiple controlplane nodes. In this case we don't.
+
