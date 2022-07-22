@@ -38,3 +38,25 @@ Node port has many ips and Load balancer has single ip
 ```
 
 ###### Refer imperative vs declarative section 2
+
+
+###### How to schedule a pod if there is no scheduler
+```
+we can assign nodename to pod only when we are creating. If the pod is already present,  its not possible to assign the node
+Another way is to create and "pod binding object" and send post request to pod binding API
+in json format using curl command
+```
+
+### Memory
+###### k8s default is 1 vcpu if you dint specify , Memory of 512Mi
+###### Container "cannot" use more "cpu" than its limit
+###### ontainer "can" use more "memory" than its limit
+
+
+###### kubeproxy is deployed as daemonset
+
+###### pod manifest oath can be found in 
+```
+kubelet.service, we have 
+--pod-manifest-path = /etc/kubernetes/manifests
+```
