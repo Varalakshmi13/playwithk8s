@@ -1,4 +1,0 @@
-commads:
-
-kubectl get po
-kubrctl get po -n ns
